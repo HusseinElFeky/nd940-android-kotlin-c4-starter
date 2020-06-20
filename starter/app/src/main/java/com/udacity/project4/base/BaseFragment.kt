@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar
  * Base Fragment to observe on the common LiveData objects
  */
 abstract class BaseFragment : Fragment() {
+
     /**
      * Every fragment has to have an instance of a view model that extends from the BaseViewModel
      */
@@ -17,17 +18,21 @@ abstract class BaseFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
         _viewModel.showErrorMessage.observe(this, Observer {
-            Toast.makeText(activity, it, Toast.LENGTH_LONG).show()
+            showToast(it)
         })
+
         _viewModel.showToast.observe(this, Observer {
-            Toast.makeText(activity, it, Toast.LENGTH_LONG).show()
+            showToast(it)
         })
+
         _viewModel.showSnackBar.observe(this, Observer {
-            Snackbar.make(this.view!!, it, Snackbar.LENGTH_LONG).show()
+            showSnackbar(it)
         })
+
         _viewModel.showSnackBarInt.observe(this, Observer {
-            Snackbar.make(this.view!!, getString(it), Snackbar.LENGTH_LONG).show()
+            showSnackbar(getString(it))
         })
 
         _viewModel.navigationCommand.observe(this, Observer { command ->
@@ -40,5 +45,13 @@ abstract class BaseFragment : Fragment() {
                 )
             }
         })
+    }
+
+    fun showToast(message: String) {
+        Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
+    }
+
+    fun showSnackbar(message: String) {
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
     }
 }
