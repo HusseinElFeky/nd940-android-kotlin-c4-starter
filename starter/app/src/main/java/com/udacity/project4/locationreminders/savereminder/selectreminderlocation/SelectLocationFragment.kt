@@ -48,8 +48,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             container,
             false
         )
-        binding.viewModel = _viewModel
         binding.lifecycleOwner = this
+        binding.viewModel = _viewModel
 
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
@@ -121,11 +121,33 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             })
             true
         }
+    }
 
-        locationGetter.getLastLocation {
-            map.moveCamera(
-                CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), 15.0f)
+    private fun initMapView() {
+        val latitude = _viewModel.latitude.value
+        val longitude = _viewModel.longitude.value
+        val locationSnippet = _viewModel.reminderSelectedLocationStr.value
+
+        if (latitude != null && longitude != null && locationSnippet != null) {
+            val latLng = LatLng(latitude, longitude)
+            marker = map.addMarker(
+                MarkerOptions().position(latLng)
+                    .title("Selected Location")
+                    .snippet(locationSnippet)
             )
+            map.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(latLng, 15.0f)
+            )
+        } else if (PermissionUtils.isPermissionGranted(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        ) {
+            locationGetter.getLastLocation {
+                map.moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), 15.0f)
+                )
+            }
         }
     }
 
@@ -157,30 +179,31 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         map = googleMap
         setMapStyle(map)
         startLocationGetterFlow()
+        initMapView()
 
         map.setOnPoiClickListener {
             marker?.remove()
 
-            val locationName = it.name
-            _viewModel.updateSelectedLocation(it.latLng, locationName, it)
+            val locationSnippet = it.name
+            _viewModel.updateSelectedLocation(it.latLng, locationSnippet, it)
 
             marker = map.addMarker(
                 MarkerOptions().position(it.latLng)
                     .title("Selected Location")
-                    .snippet(locationName)
+                    .snippet(locationSnippet)
             )
         }
 
         map.setOnMapClickListener {
             marker?.remove()
 
-            val locationName = "${it.latitude.truncate(6)}, ${it.longitude.truncate(6)}"
-            _viewModel.updateSelectedLocation(it, locationName)
+            val locationSnippet = "${it.latitude.truncate(6)}, ${it.longitude.truncate(6)}"
+            _viewModel.updateSelectedLocation(it, locationSnippet)
 
             marker = map.addMarker(
                 MarkerOptions().position(it)
                     .title("Selected Location")
-                    .snippet(locationName)
+                    .snippet(locationSnippet)
             )
         }
     }

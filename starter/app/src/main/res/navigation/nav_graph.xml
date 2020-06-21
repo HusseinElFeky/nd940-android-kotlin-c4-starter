@@ -16,7 +16,13 @@
             app:enterAnim="@anim/fragment_open_enter"
             app:exitAnim="@anim/fragment_open_exit"
             app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
+            app:popExitAnim="@anim/fragment_close_exit">
+            <argument
+                android:name="reminder_data"
+                android:defaultValue="@null"
+                app:argType="com.udacity.project4.locationreminders.reminderslist.ReminderDataItem"
+                app:nullable="true" />
+        </action>
     </fragment>
 
     <fragment
@@ -24,6 +30,11 @@
         android:name="com.udacity.project4.locationreminders.savereminder.SaveReminderFragment"
         android:label="Add Reminder"
         tools:layout="@layout/fragment_save_reminder">
+        <argument
+            android:name="reminder_data"
+            android:defaultValue="@null"
+            app:argType="com.udacity.project4.locationreminders.reminderslist.ReminderDataItem"
+            app:nullable="true" />
         <action
             android:id="@+id/action_saveReminderFragment_to_reminderListFragment"
             app:destination="@id/reminderListFragment"

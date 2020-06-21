@@ -26,7 +26,7 @@ class SaveReminderViewModel(
     val longitude = MutableLiveData<Double>()
 
     /**
-     * Clear the live data objects to start fresh next time the view model gets called
+     * Clear the live data objects to start fresh next time the view model gets called.
      */
     fun onClear() {
         reminderTitle.value = null
@@ -38,7 +38,7 @@ class SaveReminderViewModel(
     }
 
     /**
-     * Validate the entered data then saves the reminder data to the DataSource
+     * Validate the entered data then save the reminder data to the DataSource.
      */
     fun validateAndSaveReminder(reminderData: ReminderDataItem) {
         if (validateEnteredData(reminderData)) {
@@ -47,9 +47,9 @@ class SaveReminderViewModel(
     }
 
     /**
-     * Save the reminder to the data source
+     * Save the reminder to the data source.
      */
-    fun saveReminder(reminderData: ReminderDataItem) {
+    private fun saveReminder(reminderData: ReminderDataItem) {
         showLoading.value = true
         viewModelScope.launch {
             dataSource.saveReminder(
@@ -69,9 +69,9 @@ class SaveReminderViewModel(
     }
 
     /**
-     * Validate the entered data and show error to the user if there's any invalid data
+     * Validate the entered data and show error to the user if there's any invalid data.
      */
-    fun validateEnteredData(reminderData: ReminderDataItem): Boolean {
+    private fun validateEnteredData(reminderData: ReminderDataItem): Boolean {
         if (reminderData.title.isNullOrEmpty()) {
             showSnackBarInt.value = R.string.err_enter_title
             return false
@@ -81,17 +81,18 @@ class SaveReminderViewModel(
             showSnackBarInt.value = R.string.err_select_location
             return false
         }
+
         return true
     }
 
     fun updateSelectedLocation(
         latLng: LatLng,
-        locationName: String,
+        locationSnippet: String,
         pointOfInterest: PointOfInterest? = null
     ) {
         selectedPOI.postValue(pointOfInterest)
         latitude.postValue(latLng.latitude)
         longitude.postValue(latLng.longitude)
-        reminderSelectedLocationStr.postValue(locationName)
+        reminderSelectedLocationStr.postValue(locationSnippet)
     }
 }
