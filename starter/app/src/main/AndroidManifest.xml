@@ -34,8 +34,9 @@
             android:configChanges="orientation|screenSize" />
 
         <activity
-            android:name=".locationreminders.ReminderDescriptionActivity"
-            android:configChanges="orientation|screenSize" />
+            android:name=".locationreminders.ReminderDetailsActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/label_reminder_details" />
 
         <receiver
             android:name=".locationreminders.geofence.GeofenceBroadcastReceiver"
