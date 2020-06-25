@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -85,21 +86,23 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     private fun startLocationGetterFlow() {
-        if (PermissionUtils.isPermissionGranted(
+        if (PermissionUtils.arePermissionsGranted(
                 requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
+                LOCATION_PERMISSIONS
             )
         ) {
             enableMyLocation()
         } else {
-            PermissionUtils.requestPermission(
+            PermissionUtils.requestPermissions(
                 this,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                LOCATION_PERMISSIONS
             ) { result ->
-                if (result) {
+                if (result.values.all { it }) {
                     enableMyLocation()
                 } else {
-                    showSnackbar(getString(R.string.permission_denied_explanation))
+                    showSnackbar(getString(R.string.permission_denied_explanation)) {
+                        startLocationGetterFlow()
+                    }
                 }
             }
         }
@@ -138,9 +141,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             map.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(latLng, 15.0f)
             )
-        } else if (PermissionUtils.isPermissionGranted(
+        } else if (PermissionUtils.arePermissionsGranted(
                 requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
+                LOCATION_PERMISSIONS
             )
         ) {
             locationGetter.getLastLocation {
@@ -210,5 +213,15 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     companion object {
         private val TAG = SelectLocationFragment::class.java.simpleName
+        private val LOCATION_PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            )
+        } else {
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        }
     }
 }

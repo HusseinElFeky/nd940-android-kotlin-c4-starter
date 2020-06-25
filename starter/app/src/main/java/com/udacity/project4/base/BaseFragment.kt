@@ -1,10 +1,12 @@
 package com.udacity.project4.base
 
+import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.udacity.project4.R
 
 /**
  * Base Fragment to observe on the common LiveData objects
@@ -51,7 +53,9 @@ abstract class BaseFragment : Fragment() {
         Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
     }
 
-    fun showSnackbar(message: String) {
-        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
+    fun showSnackbar(message: String, retryAction: ((View) -> Unit)? = null) {
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG)
+            .setAction(R.string.retry, retryAction)
+            .show()
     }
 }
